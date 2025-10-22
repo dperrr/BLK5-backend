@@ -16,7 +16,7 @@ export const protect = async (req, res, next) => {
         const user = await User.findById(decode.id).select("-password");
         if (!user) return res.status(401).json({ message: "User not found" });
 
-        req.user = decode;
+        req.user = user;
         next();
 
     }catch (err) {
@@ -25,9 +25,9 @@ export const protect = async (req, res, next) => {
 } 
 
 export const adminOnly = (req, res, next) => {
-    if(!req.user) return res.status(401).json({ message: "Not authorized motherfucker"});
+    if(!req.user) return res.status(401).json({ message: "Not authorized motherfucker" });
     if (req.user.role !== "admin") {
-    return res.status(403).json({ message: "Admins only" });
-  }
+        return res.status(403).json({ message: "Admins only" });
+    }
   next();
 };
