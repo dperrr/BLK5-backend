@@ -88,7 +88,7 @@ export const loginUser = async (req, res) => {
 export const getUserProfile = async (req, res) => {
   try {
 
-    const user = await User.findById(req.user.id).select("-password");
+    const user = await User.findById(req.user._id).select("-password");
     if (!user) return res.status(404).json({ message: "User not found" });
     res.json({
       "message": "User profile fetched successfully",
@@ -103,7 +103,7 @@ export const getUserProfile = async (req, res) => {
 export const updateProfile = async (req, res) => {
   try {
 
-    const user = await User.findById(req.user.id);
+    const user = await User.findById(req.user._id);
     if (!user) return res.status(404).json({ message: "User not found" });
 
     user.firstName = req.body.firstName || user.firstName;
