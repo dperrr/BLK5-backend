@@ -54,8 +54,10 @@ export const getMotorcycleById = async (req, res) => {
 
 export const updateMotorcycle = async (req, res) => {
   try {
-    const motorcycle = await Motorcycle.findOneAndUpdate(
-      { _id: req.params.id, owner: req.user._id },
+    const motorcycle = await Motorcycle.findOneAndUpdate({ 
+        _id: req.params.id, 
+        owner: req.user._id 
+      },
       req.body,
       { new: true }
     );
