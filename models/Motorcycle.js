@@ -1,7 +1,7 @@
 import mongoose from 'mongoose';
 
 
-const motorCycleShema = new mongoose.Schema (
+const motorcycleShema = new mongoose.Schema (
     {
         owner: {
             type: mongoose.Schema.Types.ObjectId,
@@ -22,12 +22,17 @@ const motorCycleShema = new mongoose.Schema (
         },
         year: {
             type: Number,
+            min: 1900,
+            max: new Date().getFullYear(),
         },
         plateNumber: {
-            type:String
+            type:String,
+            trim: true,
+            uppercase: true,
         },
         color: {
-            type:String
+            type:String,
+            trim: true,
         },
         mileage: {
             type: Number, default: 0
@@ -41,4 +46,4 @@ const motorCycleShema = new mongoose.Schema (
         }
 );
 
-export default mongoose.model('Motorcycle', motorCycleShema);
+export default mongoose.model('Motorcycle', motorcycleShema);
