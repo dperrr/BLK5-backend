@@ -61,7 +61,7 @@ export const loginUser = async (req, res) => {
     if (!isMatch) return res.status(400).json({ message: "Invalid credentials" });
 
     // send refresh token in cookie (httpOnly)
-    const acessToken = generateAccessToken(user._id);
+    const accessToken = generateAccessToken(user._id);
     const refreshToken = generateRefreshToken(user._id);
     res.cookie("refreshToken", refreshToken, {
       httpOnly: true,
@@ -72,7 +72,7 @@ export const loginUser = async (req, res) => {
 
     res.json({
       message: "Login successful",
-      acessToken,
+      accessToken,
       user: {
         id: user._id,
         name: `${user.firstName} ${user.lastName}`,
