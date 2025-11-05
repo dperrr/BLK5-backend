@@ -1,6 +1,4 @@
 import Motorcycle from "../models/Motorcycle.js";
-
-
 export const createMotorcycle = async (req, res) => {
   try {
     const { name, brand, model, year, plateNumber, color, mileage, datePurchased } = req.body;

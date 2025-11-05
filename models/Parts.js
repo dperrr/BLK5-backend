@@ -33,6 +33,7 @@ const partsSchema = new mongoose.Schema(
     },
     lastMaintenance: {
       type: Date,
+      default: Date.now,
     },
     notes: {
       type: String,
