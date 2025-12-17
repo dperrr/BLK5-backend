@@ -3,7 +3,7 @@ import dotenv from "dotenv";
 import connectDB from "./config/db.js";
 import cookieParser from "cookie-parser";
 import routes from "./routes/index.js";  
-
+import listEndpoints from "express-list-endpoints";
 dotenv.config();
 const app = express();
 
@@ -15,4 +15,5 @@ app.use(cookieParser());
 app.use("/api", routes);
 
 const PORT = process.env.PORT || 5000;
+console.table(listEndpoints(routes));
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
