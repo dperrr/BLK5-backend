@@ -11,7 +11,7 @@ router.get("/userProfile", protect, getUserProfile, (req, res) => {
   res.json({ message: "Welcome, authorized user", user: req.user });
 });
 router.put("/updateProfile", protect, updateProfile);
-router.get("/refresh", refreshToken);
+router.post("/refresh", refreshToken);
 router.post("/logout", logOut);
 
 
