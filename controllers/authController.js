@@ -5,7 +5,7 @@ import jwt from "jsonwebtoken";
 
 export const registerUser = async (req, res) => {
     try{
-        const { firstName, lastName, email, password, role} = req.body;
+        const { firstName, lastName, email, password } = req.body;
         const existingUser = await User.findOne({ email });
         if (existingUser)  return res.status(400).json({ message: "User already exists" });
 
@@ -16,16 +16,23 @@ export const registerUser = async (req, res) => {
             lastName,
             email,
             password: hashedPassword,
-            role,
+            role: "user",
         });
         res.status(201).json({ message: `${firstName} ${lastName} registered succesfully`});
     } catch (err) {
-        return res.status(500).json({ message: "Something went wrong" });
+      console.error("REGISTRATION ERROR:", err);
+      return res.status(500).json({ message: "Something went wrong" });
     }
 };
 
 export const generateAccessToken = (userId) => {
-    return jwt.sign({ id: userId}, process.env.JWT_SECRET, { expiresIn: "15m" });
+    return jwt.sign({ id: userId}, process.env.JWT_SECRET, { 
+      expiresIn: "15m" 
+      });
+}
+
+export const generateRefreshToken = (userId) => {
+    return jwt.sign({ id: userId}, process.env.JWT_REFRESH_SECRET, { expiresIn: "7d" });
 }
 
 export const refreshToken = async (req, res) => {
@@ -35,28 +42,29 @@ export const refreshToken = async (req, res) => {
 
     const decoded = jwt.verify(token, process.env.JWT_REFRESH_SECRET);
     const user = await User.findById(decoded.id);
+
     if(!user) return res.status(401).json({ message: "User not found" });
 
     const newAccessToken = generateAccessToken(user._id);
-    res.json({ message: "Try"  ,accessToken: newAccessToken });
+    res.json({ message: "Token Refreshed Successfully"  ,accessToken: newAccessToken });
 
-  }catch (err) {
+  } catch (err) {
+    console.error("REFRESH TOKEN ERROR:", err);
     return res.status(401).json({ message: "Invalid refresh tokenew" });
   }
 }
 
-export const generateRefreshToken = (userId) => {
-    return jwt.sign({ id: userId}, process.env.JWT_REFRESH_SECRET, { expiresIn: "7d" });
-}
+
 
 export const loginUser = async (req, res) => {
   try {
     const { email, password } = req.body;
 
-   
+    //Find user
     const user = await User.findOne({ email });
     if (!user) return res.status(400).json({ message: "Invalid credentials" });
 
+    //Check password
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) return res.status(400).json({ message: "Invalid credentials" });
 
@@ -81,7 +89,11 @@ export const loginUser = async (req, res) => {
       }
     });
   } catch (err) {
-    res.status(500).json({ message: "Server error" });
+    console.error("LOGIN ERROR:", err);
+    res.status(500).json({
+      message: "Server error",
+      error: err.message
+    });
   }
 };
 
@@ -95,7 +107,8 @@ export const getUserProfile = async (req, res) => {
       user
     })
 
-  }catch (err) {
+  } catch (err) {
+    console.error("GET PROFILE ERROR:", err);
     res.status(500).json({ message: "Server error" });
   }
 }
@@ -110,10 +123,6 @@ export const updateProfile = async (req, res) => {
     user.lastName = req.body.lastName || user.lastName;
     user.email = req.body.email || user.email;
 
-    if(req.body.password) {
-      user.password = await bcrypt.hash(req.body.password, 12);
-    };
-
     const updateUser = await user.save();
 
     res.json({
@@ -122,13 +131,13 @@ export const updateProfile = async (req, res) => {
         id: updateUser._id,
         firstName: updateUser.firstName,
         lastName: updateUser.lastName,
-        password: updateUser.password,
         email: updateUser.email,
         role: updateUser.role
       }
     });
 
-  }catch (err) {
+  } catch (err) {
+    console.error("UPDATE PROFILE ERROR:", err);
     res.status(500).json({ message: "Server error" });
   }
 };
@@ -137,7 +146,7 @@ export const logOut = (req, res) => {
   res.clearCookie("refreshToken", {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
-    samesite: "strict",
+    sameSite: "strict",
   });
   return res.json({ message: "Logged out successfully" });
 }

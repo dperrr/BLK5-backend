@@ -7,13 +7,16 @@ import maintenanceRoutes from "./maintenanceRoutes.js"
 
 const router = express.Router();
 
+const routes = [
+    { path: "/auth", route: authRoutes },
+    { path: "/admin", route: adminRoutes },
+    { path: "/motorcycles", route: motorcylceRoutes },
+    { path: "/parts", route: partRoutes },
+    { path: "/maintenance", route: maintenanceRoutes },
+];
 
-router.use("/auth", authRoutes);
-router.use("/admin", adminRoutes);
-router.use("/motorcycles", motorcylceRoutes);
-router.use("/parts", partRoutes);
-router.use("/maintenance", maintenanceRoutes);
-
-
+routes.forEach(({ path, route }) => {
+    router.use(path, route)
+});
 
 export default router;
