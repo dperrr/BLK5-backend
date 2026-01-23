@@ -40,6 +40,9 @@ const motorcycleShema = new mongoose.Schema (
         datePurchased: {
             type: Date
         },
+        imageUrl: {
+            type: String,
+        }
     },
         {
             timestamps: true
